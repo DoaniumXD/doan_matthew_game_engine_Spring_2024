@@ -20,6 +20,8 @@ class Player(Sprite):
         self.vx, self.vy = 0, 0
         self.x = x * TILESIZE
         self.y = y * TILESIZE
+        self.speed = 300
+        self.hearts = 1
 
     #Input to move player
     #def move(self, dx = 0, dy = 0):
@@ -30,13 +32,13 @@ class Player(Sprite):
         self.vx, self.vy = 0, 0
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT] or keys[pg.K_a]:
-            self.vx = -PLAYER_SPEED
+            self.vx = -self.speed
         if keys[pg.K_RIGHT] or keys[pg.K_d]:
-            self.vx = PLAYER_SPEED
+            self.vx = self.speed
         if keys[pg.K_UP] or keys[pg.K_w]:
-            self.vy = -PLAYER_SPEED
+            self.vy = -self.speed
         if keys[pg.K_DOWN] or keys[pg.K_s]:
-            self.vy = PLAYER_SPEED
+            self.vy = self.speed
         if self.vx != 0 and self.vy != 0: #diagonal physics
             self.vx *= 0.7071
             self.vy *= 0.7071
@@ -62,12 +64,13 @@ class Player(Sprite):
                 self.rect.y = self.y
             
     
-    def collide_with_spike(self, group):
-        hit_power_up = pg.sprite.spritecollide(self, self.game.spike, True)
-        if hit_power_up:
-            pg.quit()
-            print('YOU DIED')
-        
+    def collide_with_group(self, group, kill):
+        object_collision = pg.sprite.spritecollide(self, group, True)
+        if object_collision:
+            if str(object_collision[0].__class__.__name__) == "Speed_PowerUP":
+                self.speed += 300
+            if str(object_collision[0].__class__.__name__) == "Hearts":
+                self.hearts += 1
                  
     #Update player movement
     def update(self):
@@ -77,13 +80,12 @@ class Player(Sprite):
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
         self.rect.x = self.x
-        # add x collision later
         self.collide_with_walls('x')
         self.rect.y = self.y
-        #add y collision later 
         self.collide_with_walls('y')
 
-        self.collide_with_spike(self.game.spike)
+        self.collide_with_group(self.game.Speed_PowerUP, True)
+        self.collide_with_group(self.game.Hearts, True)
         
         
 
@@ -101,9 +103,9 @@ class Wall(Sprite):
         self.rect.x = self.x * TILESIZE 
         self.rect.y = self.y * TILESIZE
 
-class Spike(Sprite):
+class Speed_PowerUP(Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.spike #add PowerUp groups later
+        self.groups = game.all_sprites, game.Speed_PowerUP 
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
@@ -113,4 +115,19 @@ class Spike(Sprite):
         self.y = y
         self.rect.x = self.x * TILESIZE 
         self.rect.y = self.y * TILESIZE 
+
+class Hearts(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.Hearts 
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = self.x * TILESIZE 
+        self.rect.y = self.y * TILESIZE 
+
+
 

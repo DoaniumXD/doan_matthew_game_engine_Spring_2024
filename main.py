@@ -32,7 +32,8 @@ class Game:
     def new(self):
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
-        self.spike = pg.sprite.Group()
+        self.Speed_PowerUP = pg.sprite.Group()
+        self.Hearts = pg.sprite.Group()
         #self.player = Player(self, 10, 10)
         #for x in range(10, 20):
         #    Wall(self, x, 5)
@@ -45,7 +46,9 @@ class Game:
                 if tile == "P":
                     self.player = Player(self, col, row)
                 if tile == "S":
-                    Spike(self, col, row)
+                    Speed_PowerUP(self, col, row)
+                if tile == "H":
+                    Hearts(self, col, row)
                     
     #Define Run Method in Game Engine
     def run(self):
@@ -72,12 +75,25 @@ class Game:
         for y in range(0, WIDTH, TILESIZE):
              pg.draw.line(self.screen, LIGHTGREY, (0,y), (WIDTH, y))
     
-    #Draw grid and fill in BG
+    #Display text on screen
+    def draw_text(self, surface, text, size, color, x, y):
+        font_name = pg.font.match_font('arial')
+        font = pg.font.Font(font_name, size)
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.topleft = (x*TILESIZE,y*TILESIZE)
+        surface.blit(text_surface, text_rect)
+    
+    #Draw grid, fill in BG, Draw text
     def draw(self):
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen) 
+        self.draw_text(self.screen, "Lives:", 64, WHITE, 1, 1)
+        self.draw_text(self.screen, str(self.player.hearts), 64, WHITE, 5.5, 1)
+
         pg.display.flip()
+        
 
     #Define Input Method and get input from keyboard
     def events(self):

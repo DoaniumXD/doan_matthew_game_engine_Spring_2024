@@ -5,7 +5,6 @@ TITLE = "Hello"
 FPS = 30
 
 PLAYER_SPEED = 300
-
 #32 grids in width
 WIDTH = 1024
 #24 grids in length
@@ -21,5 +20,5 @@ YELLOW = (255, 255, 0)
 LIGHTGREY = (100, 100, 100)
 PURPLE = (255, 0, 255)
 RED = (255, 0, 0)
-
+WHITE = (255, 255, 255)
 
