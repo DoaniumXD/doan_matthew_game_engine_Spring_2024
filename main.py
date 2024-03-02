@@ -7,7 +7,34 @@ from settings import *
 from sprites import * 
 from os import path
 from time import sleep
+from math import floor
 
+#Cooldown Class
+class Cooldown():
+    #set all properties to 0 when instantiated
+    def __init__(self):
+        self.current_time = 0
+        self.event_time = 0
+        self.delta = 0
+    
+    #Use ticking to count up or down
+    def ticking(self):
+        self.current_time = floor((pg.time.get_ticks())/1000)
+        self.delta = self.current_time - self.event_time
+    
+    #resets event time to 0/reset cooldown
+    def countdown(self, x):
+        x = x - self.delta
+        if x != None:
+            return x
+    
+    def event_reset(self):
+        self.event_time = floor((pg.time.get_ticks())/1000)
+    
+    #set current time
+    def timer(self):
+        self.current_time = floor((pg.time.get_ticks())/1000)
+    
 #Game class 
 class Game:
 
@@ -16,13 +43,17 @@ class Game:
         pg.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
+        #setting game clock
         self.clock = pg.time.Clock()
-        pg.key.set_repeat(500, 100)
+        #pg.key.set_repeat(500, 100)
         self.load_data()
 
     #Load save game data
+    #Added images folder and image in the load_data method for use with the player
     def load_data(self):
         game_folder = path.dirname(__file__)
+        img_folder = path.join(game_folder, 'images')
+        self.player_img = pg.image.load(path.join(img_folder, 'OSHAWOTT.png')).convert_alpha()
         self.map_data = []
         with open(path.join(game_folder, 'map.txt'), 'rt') as f:
             for line in f:
@@ -30,6 +61,7 @@ class Game:
     
     # Init all variables, setup groups, instantiate classes
     def new(self):
+        self.test_timer = Cooldown()
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.Speed_PowerUP = pg.sprite.Group()
@@ -66,6 +98,7 @@ class Game:
     
     #Update all sprite groups
     def update(self):
+         self.test_timer.ticking()
          self.all_sprites.update()
 
     #Draw lines to make grid
@@ -84,14 +117,14 @@ class Game:
         text_rect.topleft = (x*TILESIZE,y*TILESIZE)
         surface.blit(text_surface, text_rect)
     
-    #Draw grid, fill in BG, Draw text
+    #Draw grid, fill in BG, Draw text, Display timer
     def draw(self):
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen) 
+        self.draw_text(self.screen, str(self.test_timer.countdown(45)), 64, WHITE, 15, 0.75)
         self.draw_text(self.screen, "Lives:", 64, WHITE, 1, 1)
         self.draw_text(self.screen, str(self.player.hearts), 64, WHITE, 5.5, 1)
-
         pg.display.flip()
         
 
