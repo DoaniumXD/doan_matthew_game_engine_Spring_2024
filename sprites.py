@@ -105,6 +105,7 @@ class Wall(Sprite):
         self.rect.x = self.x * TILESIZE 
         self.rect.y = self.y * TILESIZE
 
+#Power Up class
 class Speed_PowerUP(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.Speed_PowerUP 
@@ -118,6 +119,7 @@ class Speed_PowerUP(Sprite):
         self.rect.x = self.x * TILESIZE 
         self.rect.y = self.y * TILESIZE 
 
+#Lives Class
 class Hearts(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.Hearts 

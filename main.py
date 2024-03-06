@@ -10,7 +10,7 @@ from time import sleep
 from math import floor
 
 #3 Features I am committed to adding and haven't added yet: 
-    #1. "Destroy walls" Power UP
+    #1. "Ignore walls" Power UP
     #2. Moving enemies that track player's position
     #3. Collectable Weapons to kill enemies
 
@@ -105,6 +105,9 @@ class Game:
     def update(self):
          self.test_timer.ticking()
          self.all_sprites.update()
+         if self.test_timer.countdown(60) < 0:
+             pg.quit()
+             sys.exit()
 
     #Draw lines to make grid
     def draw_grid(self):
@@ -127,7 +130,7 @@ class Game:
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen) 
-        self.draw_text(self.screen, str(self.test_timer.countdown(100)), 64, WHITE, 15, 0.75)
+        self.draw_text(self.screen, str(self.test_timer.countdown(60)), 64, WHITE, 15, 0.75)
         self.draw_text(self.screen, "Lives:", 64, WHITE, 1, 0.75)
         self.draw_text(self.screen, str(self.player.hearts), 64, WHITE, 5.25, 0.75)
         pg.display.flip()
