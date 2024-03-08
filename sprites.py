@@ -4,6 +4,7 @@
 import pygame as pg
 from pygame.sprite import Sprite
 from settings import *
+import sys
 
 #Import Sprite Class
 from pygame.sprite import Sprite
@@ -16,14 +17,13 @@ class Player(Sprite):
         self.game = game
         #added player image to sprite from game class
         self.image = game.player_img
-        #self.image = pg.Surface((TILESIZE, TILESIZE))
-        #self.image.fill(GREEN)
         self.rect = self.image.get_rect()
+        
         self.vx, self.vy = 0, 0
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.speed = 300
-        self.hearts = 1
+        self.hitpoints = 100
 
     #Input to move player
     #def move(self, dx = 0, dy = 0):
@@ -71,9 +71,18 @@ class Player(Sprite):
         if object_collision:
             if str(object_collision[0].__class__.__name__) == "Speed_PowerUP":
                 self.speed += 300
-            if str(object_collision[0].__class__.__name__) == "Hearts":
-                self.hearts += 1
-                 
+            if str(object_collision[0].__class__.__name__) == "Hitpoints":
+                self.hitpoints += 1
+            if str(object_collision[0].__class__.__name__) == "Opponent":
+                self.hitpoints -= 1
+            if str(object_collision[0].__class__.__name__) == "Ignore_Walls_PowerUP":
+                print("Work on it later lol")
+    
+    def collide_with_opponent(self, group, kill):
+        opponent_collision = pg.sprite.spritecollide(self, group, False)
+        if opponent_collision:
+            if str(opponent_collision[0].__class__.__name__) == "Opponent":
+                self.hitpoints -= 1
     #Update player movement
     def update(self):
         #self.rect.x = self.x * TILESIZE 
@@ -87,8 +96,13 @@ class Player(Sprite):
         self.collide_with_walls('y')
 
         self.collide_with_group(self.game.Speed_PowerUP, True)
-        self.collide_with_group(self.game.Hearts, True)
-        
+        self.collide_with_group(self.game.Hitpoints, True)
+        self.collide_with_group(self.game.Ignore_Walls_PowerUP, True)
+        self.collide_with_opponent(self.game.Opponent, False)
+        if self.hitpoints == 0:
+            print("YOU DIED")
+            pg.quit()
+            sys.exit()
         
 
 #Wall class
@@ -105,7 +119,7 @@ class Wall(Sprite):
         self.rect.x = self.x * TILESIZE 
         self.rect.y = self.y * TILESIZE
 
-#Power Up class
+#Speed Power Up class
 class Speed_PowerUP(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.Speed_PowerUP 
@@ -119,10 +133,10 @@ class Speed_PowerUP(Sprite):
         self.rect.x = self.x * TILESIZE 
         self.rect.y = self.y * TILESIZE 
 
-#Lives Class
-class Hearts(Sprite):
+#Hitpoints Class
+class Hitpoints(Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.Hearts 
+        self.groups = game.all_sprites, game.Hitpoints 
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
@@ -133,5 +147,61 @@ class Hearts(Sprite):
         self.rect.x = self.x * TILESIZE 
         self.rect.y = self.y * TILESIZE 
 
+#Ignore Collisions Power UP class
+class Ignore_Walls_PowerUP(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.Ignore_Walls_PowerUP
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(ORANGE)
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = self.x * TILESIZE 
+        self.rect.y = self.y * TILESIZE 
 
+#Opponent Class
+class Opponent(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.Opponent
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(BLUE)
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.vx, self.vy = 100, 100
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.speed = 1
+    def collide_with_walls(self, dir):
+        if dir == 'x':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            if hits:
+                self.vx *= -1
+                self.rect.x = self.x
+        if dir == 'y':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            if hits:
+                self.vy *= -1
+                self.rect.y = self.y
+    def update(self):
+        # self.rect.x += 1
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        
+        if self.rect.x < self.game.player.rect.x:
+            self.vx = 100
+        if self.rect.x > self.game.player.rect.x:
+            self.vx = -100    
+        if self.rect.y < self.game.player.rect.y:
+            self.vy = 100
+        if self.rect.y > self.game.player.rect.y:
+            self.vy = -100
+        self.rect.x = self.x
+        self.collide_with_walls('x')
+        self.rect.y = self.y
+        self.collide_with_walls('y')
 

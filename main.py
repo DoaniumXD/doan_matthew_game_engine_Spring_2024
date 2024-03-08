@@ -11,7 +11,7 @@ from math import floor
 
 #3 Features I am committed to adding and haven't added yet: 
     #1. "Ignore walls" Power UP
-    #2. Moving enemies that track player's position
+    #2. Moving enemies that track player's position and take away lives when it collides with player
     #3. Collectable Weapons to kill enemies
 
 #Cooldown Class
@@ -21,16 +21,20 @@ class Cooldown():
         self.current_time = 0
         self.event_time = 0
         self.delta = 0
+        self.cd = 0
     
     #Use ticking to count up or down
     def ticking(self):
         self.current_time = floor((pg.time.get_ticks())/1000)
         self.delta = self.current_time - self.event_time
     
+    def get_cd(self):
+        return self.cd
     #resets event time to 0/reset cooldown
     def countdown(self, x):
         x = x - self.delta
         if x != None:
+            self.cd = x
             return x
     
     def event_reset(self):
@@ -67,10 +71,13 @@ class Game:
     # Init all variables, setup groups, instantiate classes
     def new(self):
         self.test_timer = Cooldown()
+        self.power_up_cooldown = Cooldown()
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.Speed_PowerUP = pg.sprite.Group()
-        self.Hearts = pg.sprite.Group()
+        self.Hitpoints = pg.sprite.Group()
+        self.Ignore_Walls_PowerUP = pg.sprite.Group()
+        self.Opponent = pg.sprite.Group()
         #self.player = Player(self, 10, 10)
         #for x in range(10, 20):
         #    Wall(self, x, 5)
@@ -85,7 +92,11 @@ class Game:
                 if tile == "S":
                     Speed_PowerUP(self, col, row)
                 if tile == "H":
-                    Hearts(self, col, row)
+                    Hitpoints(self, col, row)
+                if tile == "I":
+                    Ignore_Walls_PowerUP(self, col, row)
+                if tile == "O":
+                    Opponent(self, col, row)
                     
     #Define Run Method in Game Engine
     def run(self):
@@ -108,6 +119,7 @@ class Game:
          if self.test_timer.countdown(60) < 0:
              pg.quit()
              sys.exit()
+        
 
     #Draw lines to make grid
     def draw_grid(self):
@@ -132,7 +144,7 @@ class Game:
         self.all_sprites.draw(self.screen) 
         self.draw_text(self.screen, str(self.test_timer.countdown(60)), 64, WHITE, 15, 0.75)
         self.draw_text(self.screen, "Lives:", 64, WHITE, 1, 0.75)
-        self.draw_text(self.screen, str(self.player.hearts), 64, WHITE, 5.25, 0.75)
+        self.draw_text(self.screen, str(self.player.hitpoints), 64, WHITE, 5.25, 0.75)
         pg.display.flip()
         
 
