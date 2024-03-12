@@ -10,9 +10,11 @@ from time import sleep
 from math import floor
 
 #3 Features I am committed to adding and haven't added yet: 
-    #1. "Ignore walls" Power UP
-    #2. Moving enemies that track player's position and take away lives when it collides with player
-    #3. Collectable Weapons to kill enemies
+    #1. Enemies with collisons 
+    #2. Health bar
+    #2. Time Limit to complete game
+    #2. Collectable Weapons to kill enemies
+    #3. "YOU WIN", "YOU LOSE", "YOU RAN OUT OF TIME" screens 
 
 #Cooldown Class
 class Cooldown():
@@ -76,7 +78,7 @@ class Game:
         self.walls = pg.sprite.Group()
         self.Speed_PowerUP = pg.sprite.Group()
         self.Hitpoints = pg.sprite.Group()
-        self.Ignore_Walls_PowerUP = pg.sprite.Group()
+        self.Break_Walls_PowerUP = pg.sprite.Group()
         self.Opponent = pg.sprite.Group()
         #self.player = Player(self, 10, 10)
         #for x in range(10, 20):
@@ -93,8 +95,6 @@ class Game:
                     Speed_PowerUP(self, col, row)
                 if tile == "H":
                     Hitpoints(self, col, row)
-                if tile == "I":
-                    Ignore_Walls_PowerUP(self, col, row)
                 if tile == "O":
                     Opponent(self, col, row)
                     
@@ -142,9 +142,10 @@ class Game:
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen) 
-        self.draw_text(self.screen, str(self.test_timer.countdown(60)), 64, WHITE, 15, 0.75)
-        self.draw_text(self.screen, "Lives:", 64, WHITE, 1, 0.75)
-        self.draw_text(self.screen, str(self.player.hitpoints), 64, WHITE, 5.25, 0.75)
+        self.draw_text(self.screen, "Time Remaining: ", 48, WHITE, 1, 2)
+        self.draw_text(self.screen, str(self.test_timer.countdown(60)), 48, WHITE, 10.5, 2)
+        self.draw_text(self.screen, "Health: ", 48, WHITE, 1, 0.75)
+        self.draw_text(self.screen, str(self.player.hitpoints), 48, WHITE, 5, 0.75)
         pg.display.flip()
         
 
