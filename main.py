@@ -9,12 +9,12 @@ from os import path
 from time import sleep
 from math import floor
 
-#3 Features I am committed to adding and haven't added yet: 
+# 5 Features I am committed to adding and haven't added yet: 
     #1. Enemies with collisons 
     #2. Health bar
-    #2. Time Limit to complete game
-    #2. Collectable Weapons to kill enemies
-    #3. "YOU WIN", "YOU LOSE", "YOU RAN OUT OF TIME" screens 
+    #3. Time Limit to complete game
+    #4. Collectable Weapons to kill enemies
+    #5. Start screen with instructions
 
 #Cooldown Class
 class Cooldown():
@@ -118,8 +118,7 @@ class Game:
          self.all_sprites.update()
          if self.test_timer.countdown(60) < 0:
              pg.quit()
-             sys.exit()
-        
+             sys.quit()
 
     #Draw lines to make grid
     def draw_grid(self):
@@ -163,17 +162,28 @@ class Game:
            #         self.player.move(dy = 1)
            #     if event.key == pg.K_UP:
            #          self.player.move(dy = -1)
-    
-    def show_start_screen(self):
-         pass
-    
-    def show_go_screen(self):
-         pass
-         
+
+    def display_start_screen(self):
+            self.screen.fill(PINK)
+            self.draw_text(self.screen, "Find the sword and kill all the mobs in 60 seconds to win!", 24, WHITE, 9, 3)
+            pg.display.flip()
+            self.wait_for_key()
+
+    def wait_for_key(self):
+            waiting = True
+            while waiting:
+                self.clock.tick(FPS)
+                for event in pg.event.get():
+                    if event.type == pg.QUIT:
+                        waiting = False
+                        self.quit()
+                    if event.type == pg.KEYUP:
+                        waiting = False
 
 #Instantiation of the Game class    
 g = Game()
 # g.show_start_screen()
+g.display_start_screen()
 
 while True:
      g.new()

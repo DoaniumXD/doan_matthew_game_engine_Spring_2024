@@ -170,6 +170,7 @@ class Opponent(Sprite):
             if hits:
                 self.vy *= -1
                 self.rect.y = self.y
+                
     def update(self):
         # self.rect.x += 1
         self.x += self.vx * self.game.dt
