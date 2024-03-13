@@ -80,9 +80,8 @@ class Game:
         self.Hitpoints = pg.sprite.Group()
         self.Break_Walls_PowerUP = pg.sprite.Group()
         self.Opponent = pg.sprite.Group()
-        #self.player = Player(self, 10, 10)
-        #for x in range(10, 20):
-        #    Wall(self, x, 5)
+        self.Sword = pg.sprite.Group()
+    
         for row, tiles in enumerate(self.map_data):
             print(self.map_data)
             for col, tile in enumerate(tiles):
@@ -97,6 +96,9 @@ class Game:
                     Hitpoints(self, col, row)
                 if tile == "O":
                     Opponent(self, col, row)
+                if tile == "W":
+                    Sword(self, col, row)
+    
                     
     #Define Run Method in Game Engine
     def run(self):
@@ -116,9 +118,10 @@ class Game:
     def update(self):
          self.test_timer.ticking()
          self.all_sprites.update()
-         if self.test_timer.countdown(60) < 0:
+         if self.test_timer.countdown(65) < 0:
              pg.quit()
              sys.quit()
+             print("YOU RAN OUT OF TIME!")
 
     #Draw lines to make grid
     def draw_grid(self):
@@ -142,7 +145,7 @@ class Game:
         self.draw_grid()
         self.all_sprites.draw(self.screen) 
         self.draw_text(self.screen, "Time Remaining: ", 48, WHITE, 1, 2)
-        self.draw_text(self.screen, str(self.test_timer.countdown(60)), 48, WHITE, 10.5, 2)
+        self.draw_text(self.screen, str(self.test_timer.countdown(65)), 48, WHITE, 10.5, 2)
         self.draw_text(self.screen, "Health: ", 48, WHITE, 1, 0.75)
         self.draw_text(self.screen, str(self.player.hitpoints), 48, WHITE, 5, 0.75)
         pg.display.flip()
@@ -163,12 +166,14 @@ class Game:
            #     if event.key == pg.K_UP:
            #          self.player.move(dy = -1)
 
+    #Display start screen
     def display_start_screen(self):
             self.screen.fill(PINK)
-            self.draw_text(self.screen, "Find the sword and kill all the mobs in 60 seconds to win!", 24, WHITE, 9, 3)
+            self.draw_text(self.screen, "Find the sword and kill all the mobs in 60 seconds to win!", 24, WHITE, 8.5, 3)
+            self.draw_text(self.screen, "Press any key to start!", 24, WHITE, 13, 6)
             pg.display.flip()
             self.wait_for_key()
-
+    #Get user input to start game and close start screen
     def wait_for_key(self):
             waiting = True
             while waiting:
@@ -182,13 +187,14 @@ class Game:
 
 #Instantiation of the Game class    
 g = Game()
-# g.show_start_screen()
+
+#Call display start screen function
 g.display_start_screen()
 
 while True:
      g.new()
      g.run()
-     #g.show_go_screen()
+     
 
 #Run game
 g.run()

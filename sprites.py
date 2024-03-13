@@ -24,12 +24,7 @@ class Player(Sprite):
         self.y = y * TILESIZE
         self.speed = 300
         self.hitpoints = 100
-
-    #Input to move player
-    #def move(self, dx = 0, dy = 0):
-    #    self.x += dx
-    #    self.y += dy
-    
+    #Get input from keyboard to move player
     def get_keys(self):
         self.vx, self.vy = 0, 0
         keys = pg.key.get_pressed()
@@ -45,8 +40,9 @@ class Player(Sprite):
             self.vx *= 0.7071
             self.vy *= 0.7071
     
-    def collide_with_walls(self, dir, destroy):
-        if dir == 'x' and destroy == False:
+    #Wall Collision interactions
+    def collide_with_walls(self, dir):
+        if dir == 'x':
             hits = pg.sprite.spritecollide(self, self.game.walls, False)
             if hits:
                 if self.vx > 0:
@@ -55,7 +51,7 @@ class Player(Sprite):
                     self.x = hits[0].rect.right 
                 self.vx = 0
                 self.rect.x = self.x
-        if dir == 'y' and destroy == False:
+        if dir == 'y':
             hits = pg.sprite.spritecollide(self, self.game.walls, False)
             if hits:
                 if self.vy > 0:
@@ -65,6 +61,7 @@ class Player(Sprite):
                 self.vy = 0
                 self.rect.y = self.y
     
+    #Object collision interactions
     def collide_with_group(self, group, kill):
         object_collision = pg.sprite.spritecollide(self, group, True)
         if object_collision:
@@ -74,7 +71,10 @@ class Player(Sprite):
                 self.hitpoints += 50
             if str(object_collision[0].__class__.__name__) == "Opponent":
                 self.hitpoints -= 1
+            if str(object_collision[0].__class__.__name__) == "Sword":
+                print("You got a sword! Kill the opponents!")
     
+    #Opponent collision interactions
     def collide_with_opponent(self, group, kill):
         opponent_collision = pg.sprite.spritecollide(self, group, False)
         if opponent_collision:
@@ -90,14 +90,16 @@ class Player(Sprite):
         self.y += self.vy * self.game.dt
         self.rect.x = self.x
         self.rect.y = self.y
-        self.collide_with_walls('x', False)
-        self.collide_with_walls('y', False)
+        self.collide_with_walls('x')
+        self.collide_with_walls('y')
 
         self.collide_with_group(self.game.Speed_PowerUP, True)
         self.collide_with_group(self.game.Hitpoints, True)
+        self.collide_with_group(self.game.Sword, True)
         self.collide_with_opponent(self.game.Opponent, False)
+
         if self.hitpoints == 0:
-            print("YOU DIED")
+            print("YOU DIED!")
             pg.quit()
             sys.exit()
         
@@ -159,6 +161,8 @@ class Opponent(Sprite):
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.speed = 1
+    
+    #Opponent wall collision interaction 
     def collide_with_walls(self, dir):
         if dir == 'x':
             hits = pg.sprite.spritecollide(self, self.game.walls, False)
@@ -170,7 +174,7 @@ class Opponent(Sprite):
             if hits:
                 self.vy *= -1
                 self.rect.y = self.y
-                
+    #Update opponent movement            
     def update(self):
         # self.rect.x += 1
         self.x += self.vx * self.game.dt
@@ -189,3 +193,16 @@ class Opponent(Sprite):
         self.rect.y = self.y
         self.collide_with_walls('y')
 
+#Sword class
+class Sword(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.Sword
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(BLACK)
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = self.x * TILESIZE 
+        self.rect.y = self.y * TILESIZE 
