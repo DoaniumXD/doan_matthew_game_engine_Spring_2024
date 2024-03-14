@@ -31,6 +31,7 @@ class Cooldown():
     
     def get_cd(self):
         return self.cd
+    
     #resets event time to 0/reset cooldown
     def countdown(self, x):
         x = x - self.delta
@@ -55,14 +56,13 @@ class Game:
         pg.display.set_caption(TITLE)
         #setting game clock
         self.clock = pg.time.Clock()
-        #pg.key.set_repeat(500, 100)
         self.load_data()
 
     #Load save game data
     #Added images folder and image in the load_data method for use with the player
     def load_data(self):
         game_folder = path.dirname(__file__)
-        
+
         self.img_folder = path.join(game_folder, 'images')
         self.player_img = pg.image.load(path.join(self.img_folder, 'OSHAWOTT.png')).convert_alpha()
         self.opponent_img = pg.image.load(path.join(self.img_folder, 'PIKACHU.png')).convert_alpha()
@@ -123,7 +123,7 @@ class Game:
     def update(self):
          self.test_timer.ticking()
          self.all_sprites.update()
-         if self.test_timer.countdown(63) < 0:
+         if self.test_timer.countdown(35) < 0:
              self.display_timeout_screen()
          if self.player.hitpoints == 0:
              self.display_death_screen()
@@ -151,7 +151,7 @@ class Game:
         self.draw_grid()
         self.all_sprites.draw(self.screen) 
         self.draw_text(self.screen, "Time Remaining: ", 48, WHITE, 1, 2)
-        self.draw_text(self.screen, str(self.test_timer.countdown(63)), 48, WHITE, 10.5, 2)
+        self.draw_text(self.screen, str(self.test_timer.countdown(35)), 48, WHITE, 10.5, 2)
         self.draw_text(self.screen, "Health: ", 48, WHITE, 1, 0.75)
         self.draw_text(self.screen, str(self.player.hitpoints), 48, WHITE, 5, 0.75)
         pg.display.flip()
@@ -162,15 +162,6 @@ class Game:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.quit()
-           # if event.type == pg.KEYDOWN:
-           #     if event.key == pg.K_LEFT:
-           #         self.player.move(dx = -1)
-           #     if event.key == pg.K_RIGHT:
-           #          self.player.move(dx = 1)
-           #     if event.key == pg.K_DOWN:
-           #         self.player.move(dy = 1)
-           #     if event.key == pg.K_UP:
-           #          self.player.move(dy = -1)
 
     #Display start screen
     def display_start_screen(self):
