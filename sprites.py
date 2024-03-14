@@ -15,15 +15,16 @@ class Player(Sprite):
         self.groups = game.all_sprites
         Sprite.__init__(self, self.groups) 
         self.game = game
+
         #added player image to sprite from game class
         self.image = game.player_img
         self.rect = self.image.get_rect()
-        
+
         self.vx, self.vy = 0, 0
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.speed = 300
-        self.hitpoints = 100
+        self.hitpoints = 20
         self.sword = False
 
     #Get input from keyboard to move player
@@ -70,11 +71,10 @@ class Player(Sprite):
             if str(object_collision[0].__class__.__name__) == "Speed_PowerUP":
                 self.speed += 300
             if str(object_collision[0].__class__.__name__) == "Hitpoints":
-                self.hitpoints += 50
+                self.hitpoints += 10
             if str(object_collision[0].__class__.__name__) == "Opponent":
                 self.hitpoints -= 1
             if str(object_collision[0].__class__.__name__) == "Sword":
-                print("You got a sword! Kill the opponents!")
                 self.sword = True
                 self.collide_with_opponent_with_sword(self.game.Opponent, True)
     
@@ -119,7 +119,7 @@ class Wall(Sprite):
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(YELLOW)
+        self.image.fill(PURPLE)
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
@@ -132,8 +132,8 @@ class Speed_PowerUP(Sprite):
         self.groups = game.all_sprites, game.Speed_PowerUP 
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(PURPLE)
+        self.image = self.game.Speed_PowerUP_img
+        self.rect = self.image.get_rect()
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
@@ -146,8 +146,8 @@ class Hitpoints(Sprite):
         self.groups = game.all_sprites, game.Hitpoints 
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(RED)
+        self.image = self.game.Hitpoints_img
+        self.rect = self.image.get_rect()
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
@@ -160,8 +160,7 @@ class Opponent(Sprite):
         self.groups = game.all_sprites, game.Opponent
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(BLUE)
+        self.image = self.game.opponent_img
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
@@ -207,8 +206,8 @@ class Sword(Sprite):
         self.groups = game.all_sprites, game.Sword
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(BLACK)
+        self.image = self.game.Sword_img
+        self.rect = self.image.get_rect()
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y

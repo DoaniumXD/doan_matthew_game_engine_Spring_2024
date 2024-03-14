@@ -62,8 +62,14 @@ class Game:
     #Added images folder and image in the load_data method for use with the player
     def load_data(self):
         game_folder = path.dirname(__file__)
-        img_folder = path.join(game_folder, 'images')
-        self.player_img = pg.image.load(path.join(img_folder, 'OSHAWOTT.png')).convert_alpha()
+        
+        self.img_folder = path.join(game_folder, 'images')
+        self.player_img = pg.image.load(path.join(self.img_folder, 'OSHAWOTT.png')).convert_alpha()
+        self.opponent_img = pg.image.load(path.join(self.img_folder, 'PIKACHU.png')).convert_alpha()
+        self.Speed_PowerUP_img = pg.image.load(path.join(self.img_folder, 'Speed_PowerUP.png')).convert_alpha()
+        self.Hitpoints_img = pg.image.load(path.join(self.img_folder, 'HEART.png')).convert_alpha()
+        self.Sword_img = pg.image.load(path.join(self.img_folder, 'SWORD.png')).convert_alpha()
+
         self.map_data = []
         with open(path.join(game_folder, 'map.txt'), 'rt') as f:
             for line in f:
@@ -117,7 +123,7 @@ class Game:
     def update(self):
          self.test_timer.ticking()
          self.all_sprites.update()
-         if self.test_timer.countdown(65) < 0:
+         if self.test_timer.countdown(63) < 0:
              self.display_timeout_screen()
          if self.player.hitpoints == 0:
              self.display_death_screen()
@@ -145,7 +151,7 @@ class Game:
         self.draw_grid()
         self.all_sprites.draw(self.screen) 
         self.draw_text(self.screen, "Time Remaining: ", 48, WHITE, 1, 2)
-        self.draw_text(self.screen, str(self.test_timer.countdown(65)), 48, WHITE, 10.5, 2)
+        self.draw_text(self.screen, str(self.test_timer.countdown(63)), 48, WHITE, 10.5, 2)
         self.draw_text(self.screen, "Health: ", 48, WHITE, 1, 0.75)
         self.draw_text(self.screen, str(self.player.hitpoints), 48, WHITE, 5, 0.75)
         pg.display.flip()
@@ -185,6 +191,13 @@ class Game:
     def display_death_screen(self):
         self.screen.fill(BLACK)
         self.draw_text(self.screen, "YOU DIED!", 64, WHITE, 12, 3)
+        pg.display.flip()
+        self.wait_for_key()
+    
+    def display_victory_screen(self):
+        pass
+        self.screen.fill(YELLOW)
+        self.draw_text(self.screen, "YOU WIN!", 64, WHITE, 12.5, 3)
         pg.display.flip()
         self.wait_for_key()
 
