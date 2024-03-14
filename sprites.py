@@ -24,7 +24,8 @@ class Player(Sprite):
         self.y = y * TILESIZE
         self.speed = 300
         self.hitpoints = 100
-        
+        self.sword = False
+
     #Get input from keyboard to move player
     def get_keys(self):
         self.vx, self.vy = 0, 0
@@ -74,13 +75,26 @@ class Player(Sprite):
                 self.hitpoints -= 1
             if str(object_collision[0].__class__.__name__) == "Sword":
                 print("You got a sword! Kill the opponents!")
+                self.sword = True
+                self.collide_with_opponent_with_sword(self.game.Opponent, True)
     
     #Opponent collision interactions
     def collide_with_opponent(self, group, kill):
         opponent_collision = pg.sprite.spritecollide(self, group, False)
-        if opponent_collision:
+        if opponent_collision and self.sword == False:
             if str(opponent_collision[0].__class__.__name__) == "Opponent":
                 self.hitpoints -= 1
+        else:
+         self.hitpoints -= 0
+         self.collide_with_opponent_with_sword(self.game.Opponent, True)
+    
+    #Sword interaction with opponents
+    def collide_with_opponent_with_sword(self, group, kill):
+        opponent_collision = pg.sprite.spritecollide(self, group, True)
+        if opponent_collision and self.sword == True:
+            if str(opponent_collision[0].__class__.__name__) == "Opponent":
+                self.hitpoints -= 0
+
                 
     #Update player movement
     def update(self):

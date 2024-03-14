@@ -9,13 +9,11 @@ from os import path
 from time import sleep
 from math import floor
 
-# 5 Features I am committed to adding and haven't added yet: 
-    #1. Enemies with collisons 
-    #2. Health bar
-    #3. Time Limit to complete game
-    #4. Collectable Weapons to kill enemies
-    #5. Start screen with instructions
-    #6. Death screen, timeout screen, and "you win" screen
+# 3 Features I am committed to adding and haven't added yet: 
+    #1. Enemies with collisons and health bar interactions
+    #2. Multiple screens for winning, dying, running out of time, and for the start
+    #3. Collectable Weapons to kill enemies
+
 
 #Cooldown Class
 class Cooldown():
