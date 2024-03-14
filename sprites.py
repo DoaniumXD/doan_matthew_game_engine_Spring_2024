@@ -49,6 +49,7 @@ class Player(Sprite):
         self.speed = 300
         self.hitpoints = 20
         self.sword = False
+        self.opponent_count = 6
         self.pos = vector(0,0)
         self.dir = vector(0,0)
 
@@ -98,11 +99,9 @@ class Player(Sprite):
         object_collision = pg.sprite.spritecollide(self, group, True)
         if object_collision:
             if str(object_collision[0].__class__.__name__) == "Speed_PowerUP":
-                self.speed += 300
+                self.speed += 100
             if str(object_collision[0].__class__.__name__) == "Hitpoints":
                 self.hitpoints += 10
-            if str(object_collision[0].__class__.__name__) == "Opponent":
-                self.hitpoints -= 1
             if str(object_collision[0].__class__.__name__) == "Sword":
                 self.sword = True
                 self.collide_with_opponent_with_sword(self.game.Opponent, True)
@@ -114,7 +113,6 @@ class Player(Sprite):
             if str(opponent_collision[0].__class__.__name__) == "Opponent":
                 self.hitpoints -= 1
         else:
-         self.hitpoints -= 0
          self.collide_with_opponent_with_sword(self.game.Opponent, True)
     
     #Sword interaction with opponents
@@ -122,7 +120,8 @@ class Player(Sprite):
         opponent_collision = pg.sprite.spritecollide(self, group, True)
         if opponent_collision and self.sword == True:
             if str(opponent_collision[0].__class__.__name__) == "Opponent":
-                self.hitpoints -= 0
+                self.opponent_count -= 1
+                
 
                 
     #Update player movement
@@ -204,7 +203,7 @@ class Opponent(Sprite):
         self.acc = vector(0, 0)
         self.rect.center = self.pos
         self.rot = 0
-        self.chase_distance = 1000
+        self.chase_distance = 250
         
         self.speed = 300
         self.chasing = False

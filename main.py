@@ -78,7 +78,6 @@ class Game:
     # Init all variables, setup groups, instantiate classes
     def new(self):
         self.test_timer = Cooldown()
-        self.power_up_cooldown = Cooldown()
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.Speed_PowerUP = pg.sprite.Group()
@@ -127,6 +126,8 @@ class Game:
              self.display_timeout_screen()
          if self.player.hitpoints == 0:
              self.display_death_screen()
+         if self.player.opponent_count == 0:
+             self.display_victory_screen()
         
 
     #Draw lines to make grid
@@ -185,23 +186,27 @@ class Game:
         pg.display.flip()
         self.wait_for_key()
     
+    #Display victory screen
     def display_victory_screen(self):
-        pass
-        self.screen.fill(YELLOW)
-        self.draw_text(self.screen, "YOU WIN!", 64, WHITE, 12.5, 3)
+        self.screen.fill(GREEN)
+        self.draw_text(self.screen, "YOU WIN!", 64, WHITE, 12, 3)
         pg.display.flip()
         self.wait_for_key()
 
     def wait_for_key(self):
             waiting = True
+            self.clock.tick(FPS)
+                    
             while waiting:
-                self.clock.tick(FPS)
                 for event in pg.event.get():
                     if event.type == pg.QUIT:
                         waiting = False
                         self.quit()
                     if event.type == pg.KEYUP:
                         waiting = False
+                        
+
+
     
 
 
