@@ -24,6 +24,7 @@ class Player(Sprite):
         self.y = y * TILESIZE
         self.speed = 300
         self.hitpoints = 100
+        
     #Get input from keyboard to move player
     def get_keys(self):
         self.vx, self.vy = 0, 0
@@ -98,13 +99,6 @@ class Player(Sprite):
         self.collide_with_group(self.game.Sword, True)
         self.collide_with_opponent(self.game.Opponent, False)
 
-        if self.hitpoints == 0:
-            print("YOU DIED!")
-            pg.quit()
-            sys.exit()
-        
-
-#Wall class
 class Wall(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.walls

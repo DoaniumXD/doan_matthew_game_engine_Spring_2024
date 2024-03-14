@@ -1,6 +1,6 @@
 #This file was created by: Matthew Doan
 
-TITLE = "Hello"
+TITLE = "Hurry and kill the opponents"
 
 FPS = 30
 

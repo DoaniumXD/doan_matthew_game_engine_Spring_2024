@@ -15,6 +15,7 @@ from math import floor
     #3. Time Limit to complete game
     #4. Collectable Weapons to kill enemies
     #5. Start screen with instructions
+    #6. Death screen, timeout screen, and "you win" screen
 
 #Cooldown Class
 class Cooldown():
@@ -119,9 +120,10 @@ class Game:
          self.test_timer.ticking()
          self.all_sprites.update()
          if self.test_timer.countdown(65) < 0:
-             pg.quit()
-             sys.quit()
-             print("YOU RAN OUT OF TIME!")
+             self.display_timeout_screen()
+         if self.player.hitpoints == 0:
+             self.display_death_screen()
+        
 
     #Draw lines to make grid
     def draw_grid(self):
@@ -169,11 +171,25 @@ class Game:
     #Display start screen
     def display_start_screen(self):
             self.screen.fill(PINK)
-            self.draw_text(self.screen, "Find the sword and kill all the mobs in 60 seconds to win!", 24, WHITE, 8.5, 3)
+            self.draw_text(self.screen, "Find the sword and kill all the mobs to win!", 24, WHITE, 10.5, 3)
             self.draw_text(self.screen, "Press any key to start!", 24, WHITE, 13, 6)
             pg.display.flip()
             self.wait_for_key()
-    #Get user input to start game and close start screen
+    
+    #Display timeout screen
+    def display_timeout_screen(self):
+        self.screen.fill(RED)
+        self.draw_text(self.screen, "You ran out of time! Try again!", 24, WHITE, 11.5, 3)
+        pg.display.flip()
+        self.wait_for_key()
+    
+    #Display death screen
+    def display_death_screen(self):
+        self.screen.fill(BLACK)
+        self.draw_text(self.screen, "YOU DIED!", 64, WHITE, 12, 3)
+        pg.display.flip()
+        self.wait_for_key()
+
     def wait_for_key(self):
             waiting = True
             while waiting:
@@ -184,6 +200,8 @@ class Game:
                         self.quit()
                     if event.type == pg.KEYUP:
                         waiting = False
+    
+
 
 #Instantiation of the Game class    
 g = Game()
