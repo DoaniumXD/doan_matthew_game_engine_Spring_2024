@@ -46,10 +46,14 @@ class Player(Sprite):
         self.vx, self.vy = 0, 0
         self.x = x * TILESIZE
         self.y = y * TILESIZE
+
+        #Changable parameters using objects
         self.speed = 300
         self.hitpoints = 20
         self.sword = False
         self.opponent_count = 6
+
+        #Position and direction vectors for movement
         self.pos = vector(0,0)
         self.dir = vector(0,0)
 
@@ -125,6 +129,7 @@ class Player(Sprite):
 
                 
     #Update player movement
+    #Update collision with objects
     def update(self):
         self.get_keys()
         self.x += self.vx * self.game.dt
@@ -209,6 +214,8 @@ class Opponent(Sprite):
         self.chasing = False
         
     #New opponent chasing
+    #Citation: Mr. Cozort's game engine github
+    #Change: Changed Chasing chase_distance and speed of opponent chasing
     def sensor(self):
         if abs(self.rect.x - self.game.player.rect.x) < self.chase_distance and abs(self.rect.y - self.game.player.rect.y) < self.chase_distance:
             self.chasing = True

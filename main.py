@@ -10,12 +10,20 @@ from time import sleep
 from math import floor
 
 # 3 Features I am committed to adding and haven't added yet: 
-    #1. Enemies with collisons and health bar interactions
+    #1. Add timer in game
     #2. Multiple screens for winning, dying, running out of time, and for the start
     #3. Collectable Weapons to kill enemies
 
+# Game design truths:
+# Goals: Kill all opponents by collecting the sword and without dying in 35 seconds to win
+# Rules: Must stay within the box and can't go through walls; Game ends if health or time or number of enemies go to 0
+# Feedback: Collision with enemies cause health to go down; Powerups give certain effects and disappear; Sword makes enemies disapper
+# Freedom: Able to move in the x and y direction. Able to collect, interact, and collide with objects.
 
-#Cooldown Class
+
+#Cooldown Class to set in game timer
+#Citation: Mr. Cozort's game engine github
+#Change: Made timer countdown instead of counting up
 class Cooldown():
     #set all properties to 0 when instantiated
     def __init__(self):
@@ -39,6 +47,7 @@ class Cooldown():
             self.cd = x
             return x
     
+    #reset event timer
     def event_reset(self):
         self.event_time = floor((pg.time.get_ticks())/1000)
     
@@ -52,14 +61,17 @@ class Game:
     #Initialize Method --> Intializes Game Class
     def __init__(self):
         pg.init()
+
+        #Set title and define screen
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
+
         #setting game clock
         self.clock = pg.time.Clock()
         self.load_data()
 
     #Load save game data
-    #Added images folder and image in the load_data method for use with the player
+    #Added images folder and image in the load_data method for use with the player and objects
     def load_data(self):
         game_folder = path.dirname(__file__)
 
@@ -70,6 +82,7 @@ class Game:
         self.Hitpoints_img = pg.image.load(path.join(self.img_folder, 'HEART.png')).convert_alpha()
         self.Sword_img = pg.image.load(path.join(self.img_folder, 'SWORD.png')).convert_alpha()
 
+        #Load map data for player and objects
         self.map_data = []
         with open(path.join(game_folder, 'map.txt'), 'rt') as f:
             for line in f:
@@ -119,6 +132,8 @@ class Game:
          sys.exit()
     
     #Update all sprite groups
+    #Update timer
+    #Call display screen functions when health, time, and opponent count update
     def update(self):
          self.test_timer.ticking()
          self.all_sprites.update()
@@ -164,7 +179,7 @@ class Game:
             if event.type == pg.QUIT:
                 self.quit()
 
-    #Display start screen
+    #Display start screen with instructions
     def display_start_screen(self):
             self.screen.fill(PINK)
             self.draw_text(self.screen, "Find the sword and kill all the mobs to win!", 24, WHITE, 10.5, 3)
@@ -193,6 +208,7 @@ class Game:
         pg.display.flip()
         self.wait_for_key()
 
+    #Press key to start game 
     def wait_for_key(self):
             waiting = True
             self.clock.tick(FPS)
@@ -206,7 +222,8 @@ class Game:
                         waiting = False
                         
 
-
+#Citation: Mr. Cozort's game engine github
+#Change: Added more display screens and called them when certain requirements are met
     
 
 
