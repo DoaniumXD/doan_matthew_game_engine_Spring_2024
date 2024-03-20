@@ -9,10 +9,10 @@ from os import path
 from time import sleep
 from math import floor
 
-# 3 Features I am committed to adding and haven't added yet: 
-    #1. Add timer in game
-    #2. Multiple screens for winning, dying, running out of time, and for the start
-    #3. Collectable Weapons to kill enemies
+#3 Design Goals: 
+#1. Add timer in game
+#2. Multiple screens for winning, dying, running out of time, and for the start
+#3. Collectable Weapons to kill enemies
 
 # Game design truths:
 # Goals: Kill all opponents by collecting the sword and without dying in 35 seconds to win
@@ -68,6 +68,7 @@ class Game:
 
         #setting game clock
         self.clock = pg.time.Clock()
+
         self.load_data()
 
     #Load save game data
@@ -120,7 +121,7 @@ class Game:
     #Define Run Method in Game Engine
     def run(self):
         self.playing = True
-        while self.playing:
+        while self.playing and self.waiting == False:
             self.dt = self.clock.tick(FPS) / 1000
             self.events()
             self.update()
@@ -182,8 +183,8 @@ class Game:
     #Display start screen with instructions
     def display_start_screen(self):
             self.screen.fill(PINK)
-            self.draw_text(self.screen, "Find the sword and kill all the mobs to win!", 24, WHITE, 10.5, 3)
-            self.draw_text(self.screen, "Press any key to start!", 24, WHITE, 13, 6)
+            self.draw_text(self.screen, "Find the sword and kill all the mobs to win!", 24, WHITE, 10.25, 3)
+            self.draw_text(self.screen, "Press the space bar to start!", 24, WHITE, 12, 6)
             pg.display.flip()
             self.wait_for_key()
     
@@ -208,19 +209,20 @@ class Game:
         pg.display.flip()
         self.wait_for_key()
 
-    #Press key to start game 
+    #Press space bar to start game 
     def wait_for_key(self):
-            waiting = True
-            self.clock.tick(FPS)
-                    
-            while waiting:
+            self.waiting = True
+                   
+            while self.waiting:
+                self.clock.tick(FPS)
                 for event in pg.event.get():
                     if event.type == pg.QUIT:
-                        waiting = False
+                        self.waiting = False
                         self.quit()
-                    if event.type == pg.KEYUP:
-                        waiting = False
-                        
+
+                keys = pg.key.get_pressed()
+                if keys[pg.K_SPACE]:
+                        self.waiting = False
 
 #Citation: Mr. Cozort's game engine github
 #Change: Added more display screens and called them when certain requirements are met
