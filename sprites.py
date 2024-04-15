@@ -5,12 +5,20 @@ import pygame as pg
 from pygame.sprite import Sprite
 from settings import *
 import sys
+from os import path
 
 #Import Sprite Class
 from pygame.sprite import Sprite
 
 #New collision and movement interactions for opponent
 vector = pg.math.Vector2
+
+#animated sprite png file
+SPRITESHEET = "theBell.png"
+
+#define image folder
+game_folder = path.dirname(__file__)
+img_folder = path.join(game_folder, 'images')
 
 def collide_with_walls(sprite, group, dir):
     if dir == 'x':
@@ -32,6 +40,20 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.y = 0
             sprite.rect.centery = sprite.pos.y
 
+#Get image
+class Spritesheet:
+    # utility class for loading and parsing spritesheets
+    def __init__(self, filename):
+        self.spritesheet = pg.image.load(filename).convert()
+
+    def get_image(self, x, y, width, height):
+        # grab an image out of a larger spritesheet
+        image = pg.Surface((width, height))
+        image.blit(self.spritesheet, (0, 0), (x, y, width, height))
+        # image = pg.transform.scale(image, (width, height))
+        image = pg.transform.scale(image, (width * 1, height * 1))
+        return image
+    
 #Player class
 class Player(Sprite):
     def __init__(self, game, x, y):
@@ -39,9 +61,17 @@ class Player(Sprite):
         Sprite.__init__(self, self.groups) 
         self.game = game
 
-        #added player image to sprite from game class
-        self.image = game.player_img
+        #Load image to player
+        self.spritesheet = Spritesheet(path.join(img_folder, SPRITESHEET))
+        self.load_images()
+        self.image = self.standing_frames[0]
         self.rect = self.image.get_rect()
+
+        #Stages of animated sprite
+        self.jumping = False
+        self.walking = False
+        self.current_frame = 0
+        self.last_update = 0
 
         self.vx, self.vy = 0, 0
         self.x = x * TILESIZE
@@ -125,12 +155,32 @@ class Player(Sprite):
         if opponent_collision and self.sword == True:
             if str(opponent_collision[0].__class__.__name__) == "Opponent":
                 self.opponent_count -= 1
-                
 
-                
+    #Load sprites on player            
+    def load_images(self):
+            self.standing_frames = [self.spritesheet.get_image(0,0, 32, 32), 
+                                    self.spritesheet.get_image(32,0, 32, 32)]
+            # for frame in self.standing_frames:
+            #     frame.set_colorkey(BLACK)
+    
+    #Animate sprite
+    def animate(self):
+        now = pg.time.get_ticks()
+        if now - self.last_update > 350:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.standing_frames)
+            bottom = self.rect.bottom
+            self.image = self.standing_frames[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+    
+
     #Update player movement
     #Update collision with objects
     def update(self):
+        #Calls animate functon
+        self.animate()
+        
         self.get_keys()
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
