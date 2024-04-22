@@ -74,6 +74,10 @@ class Game:
 
         self.load_data()
 
+        #Pause game variables
+        self.running = True
+        self.paused = False
+
     #Load save game data
     #Added images folder and image in the load_data method for use with the player and objects
     def load_data(self):
@@ -138,15 +142,19 @@ class Game:
     #Update all sprite groups
     #Update timer
     #Call display screen functions when health, time, and opponent count update
+    #Able to stop timer and sprite movement with pause
     def update(self):
-         self.test_timer.ticking()
-         self.all_sprites.update()
+         if not self.paused:
+            self.test_timer.ticking()
+            self.all_sprites.update()
          if self.test_timer.countdown(35) < 0:
              self.display_timeout_screen()
          if self.player.hitpoints == 0:
              self.display_death_screen()
          if self.player.opponent_count == 0:
              self.display_victory_screen()
+         if self.paused:
+             self.display_pause_screen()
         
 
     #Draw lines to make grid
@@ -182,6 +190,14 @@ class Game:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.quit()
+        
+        #Take in input to pause game
+        keys = pg.key.get_pressed()
+        if keys[pg.K_SPACE]:
+            if not self.paused:
+                self.paused = True
+            else:
+                self.paused = False
 
     #Display start screen with instructions
     def display_start_screen(self):
@@ -211,8 +227,15 @@ class Game:
         self.draw_text(self.screen, "YOU WIN!", 64, WHITE, 12, 3)
         pg.display.flip()
         self.wait_for_key()
+    
+    #Display pause screen
+    def display_pause_screen(self):
+        self.screen.fill(PINK)
+        self.draw_text(self.screen, "You have paused the game. Press the space bar to resume", 24, WHITE, 8, 6)
+        pg.display.flip()
+        self.wait_for_key()
 
-    #Press space bar to start game 
+    #Press space bar to start game or to pause the game
     def wait_for_key(self):
             self.waiting = True
                    
