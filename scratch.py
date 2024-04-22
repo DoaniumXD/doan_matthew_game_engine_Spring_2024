@@ -31,4 +31,3 @@ def another_loop():
 
 another_loop()
 
-var_x = 5

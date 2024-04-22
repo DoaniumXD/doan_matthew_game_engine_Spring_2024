@@ -9,7 +9,10 @@ from os import path
 from time import sleep
 from math import floor
 
-#3 Design Goals: 
+#1 Design Goal (Beta Version):
+# Goal: Add in a pause screen to pause the game
+
+#3 Design Goals (Alpha Version): 
 #1. Add timer in game
 #2. Multiple screens for winning, dying, running out of time, and for the start
 #3. Collectable Weapons to kill enemies
@@ -147,11 +150,11 @@ class Game:
         
 
     #Draw lines to make grid
-    def draw_grid(self):
-        for x in range(0, WIDTH, TILESIZE):
-             pg.draw.line(self.screen, LIGHTGREY, (x,0), (x, HEIGHT))
-        for y in range(0, WIDTH, TILESIZE):
-             pg.draw.line(self.screen, LIGHTGREY, (0,y), (WIDTH, y))
+    #def draw_grid(self):
+    #    for x in range(0, WIDTH, TILESIZE):
+    #         pg.draw.line(self.screen, LIGHTGREY, (x,0), (x, HEIGHT))
+    #    for y in range(0, WIDTH, TILESIZE):
+    #         pg.draw.line(self.screen, LIGHTGREY, (0,y), (WIDTH, y))
     
     #Display text on screen
     def draw_text(self, surface, text, size, color, x, y):
@@ -165,7 +168,7 @@ class Game:
     #Draw grid, fill in BG, Draw text, Display timer
     def draw(self):
         self.screen.fill(BGCOLOR)
-        self.draw_grid()
+        #self.draw_grid()
         self.all_sprites.draw(self.screen) 
         self.draw_text(self.screen, "Time Remaining: ", 48, WHITE, 1, 2)
         self.draw_text(self.screen, str(self.test_timer.countdown(35)), 48, WHITE, 10.5, 2)
