@@ -10,7 +10,7 @@ from time import sleep
 from math import floor
 
 #1 Design Goal (Beta Version):
-# Goal: Add in a pause screen to pause the game
+# Goal: Add in a pause screen and add background music
 
 #3 Design Goals (Alpha Version): 
 #1. Add timer in game
@@ -63,7 +63,9 @@ class Game:
 
     #Initialize Method --> Intializes Game Class
     def __init__(self):
+        #Init pygame
         pg.init()
+        pg.mixer.init() 
 
         #Set title and define screen
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -84,6 +86,7 @@ class Game:
         game_folder = path.dirname(__file__)
 
         self.img_folder = path.join(game_folder, 'images')
+        self.snd_folder = path.join(game_folder, 'sounds')
         #self.player_img = pg.image.load(path.join(self.img_folder, 'OSHAWOTT.png')).convert_alpha()
         self.opponent_img = pg.image.load(path.join(self.img_folder, 'PIKACHU.png')).convert_alpha()
         self.Speed_PowerUP_img = pg.image.load(path.join(self.img_folder, 'Speed_PowerUP.png')).convert_alpha()
@@ -98,6 +101,9 @@ class Game:
     
     # Init all variables, setup groups, instantiate classes
     def new(self):
+        #Load music file
+        pg.mixer.music.load(path.join(self.snd_folder,'Megalovania.mp3'))
+
         self.test_timer = Cooldown()
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
@@ -127,12 +133,15 @@ class Game:
                     
     #Define Run Method in Game Engine
     def run(self):
+        pg.mixer.music.play(loops=-1)
         self.playing = True
         while self.playing and self.waiting == False:
             self.dt = self.clock.tick(FPS) / 1000
             self.events()
             self.update()
             self.draw()
+        #Play music forever
+        
     
     #Quit game and close window
     def quit(self):
@@ -147,6 +156,8 @@ class Game:
          if not self.paused:
             self.test_timer.ticking()
             self.all_sprites.update()
+            pg.mixer.music.unpause()
+
          if self.test_timer.countdown(35) < 0:
              self.display_timeout_screen()
          if self.player.hitpoints == 0:
@@ -155,6 +166,7 @@ class Game:
              self.display_victory_screen()
          if self.paused:
              self.display_pause_screen()
+             pg.mixer.music.pause()
         
 
     #Draw lines to make grid
