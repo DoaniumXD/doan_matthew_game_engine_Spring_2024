@@ -10,7 +10,7 @@ from time import sleep
 from math import floor
 
 #1 Design Goal (Beta Version):
-# Goal: Add in a pause screen and add background music
+# Goal: Add in a pause screen and add background music that stops when pause screen is shown
 
 #3 Design Goals (Alpha Version): 
 #1. Add timer in game
@@ -85,8 +85,8 @@ class Game:
     def load_data(self):
         game_folder = path.dirname(__file__)
 
-        self.img_folder = path.join(game_folder, 'images')
-        self.snd_folder = path.join(game_folder, 'sounds')
+        self.img_folder = path.join(game_folder, 'images') #Define images folder
+        self.snd_folder = path.join(game_folder, 'sounds') #Define sounds folder
         #self.player_img = pg.image.load(path.join(self.img_folder, 'OSHAWOTT.png')).convert_alpha()
         self.opponent_img = pg.image.load(path.join(self.img_folder, 'PIKACHU.png')).convert_alpha()
         self.Speed_PowerUP_img = pg.image.load(path.join(self.img_folder, 'Speed_PowerUP.png')).convert_alpha()
@@ -101,7 +101,7 @@ class Game:
     
     # Init all variables, setup groups, instantiate classes
     def new(self):
-        #Load music file
+        #Load music file from sounds folder
         pg.mixer.music.load(path.join(self.snd_folder,'Megalovania.mp3'))
 
         self.test_timer = Cooldown()
@@ -130,17 +130,17 @@ class Game:
                 if tile == "W":
                     Sword(self, col, row)
     
-                    
     #Define Run Method in Game Engine
     def run(self):
-        pg.mixer.music.play(loops=-1)
+        #Play music forever when game is being played
+        pg.mixer.music.play()
         self.playing = True
         while self.playing and self.waiting == False:
             self.dt = self.clock.tick(FPS) / 1000
             self.events()
             self.update()
             self.draw()
-        #Play music forever
+       
         
     
     #Quit game and close window
@@ -156,7 +156,8 @@ class Game:
          if not self.paused:
             self.test_timer.ticking()
             self.all_sprites.update()
-            pg.mixer.music.unpause()
+            #Beta Project Design Goal
+            pg.mixer.music.unpause() #Play music if game is playing
 
          if self.test_timer.countdown(35) < 0:
              self.display_timeout_screen()
@@ -164,9 +165,10 @@ class Game:
              self.display_death_screen()
          if self.player.opponent_count == 0:
              self.display_victory_screen()
+        #Beta Project Design Goal
          if self.paused:
              self.display_pause_screen()
-             pg.mixer.music.pause()
+             pg.mixer.music.pause() #Stop playing music if game is paused
         
 
     #Draw lines to make grid
@@ -232,7 +234,6 @@ class Game:
         self.draw_text(self.screen, "YOU DIED!", 64, WHITE, 12, 3)
         pg.display.flip()
         self.wait_for_key()
-    
     #Display victory screen
     def display_victory_screen(self):
         self.screen.fill(GREEN)
@@ -241,6 +242,7 @@ class Game:
         self.wait_for_key()
     
     #Display pause screen
+    #Beta Project Design Goal
     def display_pause_screen(self):
         self.screen.fill(PINK)
         self.draw_text(self.screen, "You have paused the game. Press the space bar to resume", 24, WHITE, 8, 6)

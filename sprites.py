@@ -106,7 +106,7 @@ class Player(Sprite):
         if self.vx != 0 and self.vy != 0: #diagonal physics
             self.vx *= 0.7071
             self.vy *= 0.7071
-    
+
     #Player collision with walls
     def collide_with_walls(self, dir):
         if dir == 'x':
