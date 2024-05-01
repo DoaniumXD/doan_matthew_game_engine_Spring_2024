@@ -8,6 +8,10 @@ from sprites import *
 from os import path
 from time import sleep
 from math import floor
+from tilemap import *
+
+#Final Release Goal:
+#Goal: Add random jumscares with sound effects that appear to scare the user randomly 
 
 #1 Design Goal (Beta Version):
 # Goal: Add in a pause screen and add background music that stops when pause screen is shown
@@ -23,6 +27,12 @@ from math import floor
 # Feedback: Collision with enemies cause health to go down; Powerups give certain effects and disappear; Sword makes enemies disapper
 # Freedom: Able to move in the x and y direction. Able to collect, interact, and collide with objects.
 
+LEVEL1 = "level1.txt"
+LEVEL2 = "level2.txt"
+LEVEL3 = "level3.txt"
+LEVEL4 = "level4.txt"
+LEVEL5 = "level5.txt"
+levels = [LEVEL1, LEVEL2, LEVEL3, LEVEL4, LEVEL5]
 
 #Cooldown Class to set in game timer
 #Citation: Mr. Cozort's game engine github
@@ -80,24 +90,56 @@ class Game:
         self.running = True
         self.paused = False
 
+        self.current_level = 0
+        
     #Load save game data
     #Added images folder and image in the load_data method for use with the player and objects
     def load_data(self):
-        game_folder = path.dirname(__file__)
+        self.game_folder = path.dirname(__file__)
 
-        self.img_folder = path.join(game_folder, 'images') #Define images folder
-        self.snd_folder = path.join(game_folder, 'sounds') #Define sounds folder
+        self.img_folder = path.join(self.game_folder, 'images') #Define images folder
+        self.snd_folder = path.join(self.game_folder, 'sounds') #Define sounds folder
         #self.player_img = pg.image.load(path.join(self.img_folder, 'OSHAWOTT.png')).convert_alpha()
         self.opponent_img = pg.image.load(path.join(self.img_folder, 'PIKACHU.png')).convert_alpha()
         self.Speed_PowerUP_img = pg.image.load(path.join(self.img_folder, 'Speed_PowerUP.png')).convert_alpha()
         self.Hitpoints_img = pg.image.load(path.join(self.img_folder, 'HEART.png')).convert_alpha()
         self.Sword_img = pg.image.load(path.join(self.img_folder, 'SWORD.png')).convert_alpha()
 
+        self.map = Map(path.join(game_folder, levels[self.current_level]))
+
         #Load map data for player and objects
+        #self.map_data = []
+        #with open(path.join(self.game_folder, LEVEL1), 'rt') as f:
+        #    for line in f:
+        #        self.map_data.append(line)
+        
+    #Level change method
+    def change_level(self, lvl):
+        # kill all existing sprites
+        for s in self.all_sprites:
+            s.kill()
+        
+        # reset map data list to empty
         self.map_data = []
-        with open(path.join(game_folder, 'map.txt'), 'rt') as f:
+        # open next level
+        with open(path.join(self.game_folder, lvl), 'rt') as f:
             for line in f:
                 self.map_data.append(line)
+        # repopulate map with new level and sprites
+        for row, tiles in enumerate(self.map_data):
+            for col, tile in enumerate(tiles):
+                if tile == '1':
+                    Wall(self, col, row)
+                if tile == "P":
+                    self.player = Player(self, col, row)
+                if tile == "S":
+                    Speed_PowerUP(self, col, row)
+                if tile == "H":
+                    Hitpoints(self, col, row)
+                if tile == "O":
+                    Opponent(self, col, row)
+                if tile == "W":
+                    Sword(self, col, row)
     
     # Init all variables, setup groups, instantiate classes
     def new(self):
@@ -113,8 +155,7 @@ class Game:
         self.Opponent = pg.sprite.Group()
         self.Sword = pg.sprite.Group()
     
-        for row, tiles in enumerate(self.map_data):
-            print(self.map_data)
+        for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
                 #Uses a string to denote an instance of a game object
                 if tile == '1':
@@ -163,8 +204,13 @@ class Game:
              self.display_timeout_screen()
          if self.player.hitpoints == 0:
              self.display_death_screen()
+         #if self.player.opponent_count == 0:
+         #    self.display_victory_screen()
+
          if self.player.opponent_count == 0:
-             self.display_victory_screen()
+             self.current_level += 1
+             self.change_level(levels[self.current_level])
+            
         #Beta Project Design Goal
          if self.paused:
              self.display_pause_screen()
