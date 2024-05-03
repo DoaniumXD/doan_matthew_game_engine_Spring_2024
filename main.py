@@ -22,7 +22,7 @@ from tilemap import *
 #3. Collectable Weapons to kill enemies
 
 # Game design truths:
-# Goals: Kill all opponents by collecting the sword and without dying in 35 seconds to win
+# Goals: Kill all opponents by collecting the sword and without dying in 120 seconds to win
 # Rules: Must stay within the box and can't go through walls; Game ends if health or time or number of enemies go to 0
 # Feedback: Collision with enemies cause health to go down; Powerups give certain effects and disappear; Sword makes enemies disapper
 # Freedom: Able to move in the x and y direction. Able to collect, interact, and collide with objects.
@@ -32,7 +32,8 @@ LEVEL2 = "level2.txt"
 LEVEL3 = "level3.txt"
 LEVEL4 = "level4.txt"
 LEVEL5 = "level5.txt"
-levels = [LEVEL1, LEVEL2, LEVEL3, LEVEL4, LEVEL5]
+LEVEL_FINISH = "level_finish.txt"
+levels = [LEVEL1, LEVEL2, LEVEL3, LEVEL4, LEVEL5, LEVEL_FINISH]
 
 #Cooldown Class to set in game timer
 #Citation: Mr. Cozort's game engine github
@@ -84,8 +85,6 @@ class Game:
         #setting game clock
         self.clock = pg.time.Clock()
 
-        self.load_data()
-
         #Pause game variables
         self.running = True
         self.paused = False
@@ -97,6 +96,8 @@ class Game:
     def load_data(self):
         self.game_folder = path.dirname(__file__)
 
+        self.map = Map(path.join(self.game_folder, levels[self.current_level]))
+
         self.img_folder = path.join(self.game_folder, 'images') #Define images folder
         self.snd_folder = path.join(self.game_folder, 'sounds') #Define sounds folder
         #self.player_img = pg.image.load(path.join(self.img_folder, 'OSHAWOTT.png')).convert_alpha()
@@ -105,7 +106,7 @@ class Game:
         self.Hitpoints_img = pg.image.load(path.join(self.img_folder, 'HEART.png')).convert_alpha()
         self.Sword_img = pg.image.load(path.join(self.img_folder, 'SWORD.png')).convert_alpha()
 
-        self.map = Map(path.join(game_folder, levels[self.current_level]))
+        
 
         #Load map data for player and objects
         #self.map_data = []
@@ -116,9 +117,12 @@ class Game:
     #Level change method
     def change_level(self, lvl):
         # kill all existing sprites
+        print(lvl)
         for s in self.all_sprites:
             s.kill()
         
+        self.player.opponent_count = 0
+
         # reset map data list to empty
         self.map_data = []
         # open next level
@@ -126,7 +130,7 @@ class Game:
             for line in f:
                 self.map_data.append(line)
         # repopulate map with new level and sprites
-        for row, tiles in enumerate(self.map_data):
+        for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
                 if tile == '1':
                     Wall(self, col, row)
@@ -143,6 +147,9 @@ class Game:
     
     # Init all variables, setup groups, instantiate classes
     def new(self):
+
+        self.load_data()
+
         #Load music file from sounds folder
         pg.mixer.music.load(path.join(self.snd_folder,'Megalovania.mp3'))
 
@@ -200,12 +207,12 @@ class Game:
             #Beta Project Design Goal
             pg.mixer.music.unpause() #Play music if game is playing
 
-         if self.test_timer.countdown(35) < 0:
+         if self.test_timer.countdown(120) < 0:
              self.display_timeout_screen()
          if self.player.hitpoints == 0:
              self.display_death_screen()
-         #if self.player.opponent_count == 0:
-         #    self.display_victory_screen()
+         if self.current_level == 5:
+             self.display_victory_screen()
 
          if self.player.opponent_count == 0:
              self.current_level += 1
@@ -239,7 +246,7 @@ class Game:
         #self.draw_grid()
         self.all_sprites.draw(self.screen) 
         self.draw_text(self.screen, "Time Remaining: ", 48, WHITE, 1, 2)
-        self.draw_text(self.screen, str(self.test_timer.countdown(35)), 48, WHITE, 10.5, 2)
+        self.draw_text(self.screen, str(self.test_timer.countdown(120)), 48, WHITE, 10.5, 2)
         self.draw_text(self.screen, "Health: ", 48, WHITE, 1, 0.75)
         self.draw_text(self.screen, str(self.player.hitpoints), 48, WHITE, 5, 0.75)
         pg.display.flip()
