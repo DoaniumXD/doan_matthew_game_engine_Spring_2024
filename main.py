@@ -117,11 +117,10 @@ class Game:
     #Level change method
     def change_level(self, lvl):
         # kill all existing sprites
-        print(lvl)
         for s in self.all_sprites:
             s.kill()
         
-        self.player.opponent_count = 0
+        self.player.opponent_count = 6
 
         # reset map data list to empty
         self.map_data = []
@@ -130,7 +129,7 @@ class Game:
             for line in f:
                 self.map_data.append(line)
         # repopulate map with new level and sprites
-        for row, tiles in enumerate(self.map.data):
+        for row, tiles in enumerate(self.map_data):
             for col, tile in enumerate(tiles):
                 if tile == '1':
                     Wall(self, col, row)
@@ -144,6 +143,8 @@ class Game:
                     Opponent(self, col, row)
                 if tile == "W":
                     Sword(self, col, row)
+                if tile == "I":
+                    Invisible_Slowness_Tiles(self, col, row)
     
     # Init all variables, setup groups, instantiate classes
     def new(self):
@@ -161,6 +162,7 @@ class Game:
         self.Break_Walls_PowerUP = pg.sprite.Group()
         self.Opponent = pg.sprite.Group()
         self.Sword = pg.sprite.Group()
+        self.Invisible_Slowness_Tiles = pg.sprite.Group()
     
         for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
@@ -177,6 +179,8 @@ class Game:
                     Opponent(self, col, row)
                 if tile == "W":
                     Sword(self, col, row)
+                if tile == "I":
+                    Invisible_Slowness_Tiles(self, col, row)
     
     #Define Run Method in Game Engine
     def run(self):

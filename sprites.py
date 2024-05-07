@@ -139,6 +139,8 @@ class Player(Sprite):
             if str(object_collision[0].__class__.__name__) == "Sword":
                 self.sword = True
                 self.collide_with_opponent_with_sword(self.game.Opponent, True)
+            if str(object_collision[0].__class__.__name__) == "Invisible_Slowness_Tiles":
+                self.speed -= 50
     
     #Opponent collision interactions
     def collide_with_opponent(self, group, kill):
@@ -194,6 +196,7 @@ class Player(Sprite):
         self.collide_with_group(self.game.Speed_PowerUP, True)
         self.collide_with_group(self.game.Hitpoints, True)
         self.collide_with_group(self.game.Sword, True)
+        self.collide_with_group(self.game.Invisible_Slowness_Tiles, True)
         self.collide_with_opponent(self.game.Opponent, False)
 
 #Wall class
@@ -310,3 +313,16 @@ class Sword(Sprite):
         self.y = y
         self.rect.x = self.x * TILESIZE 
         self.rect.y = self.y * TILESIZE 
+
+class Invisible_Slowness_Tiles(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.Invisible_Slowness_Tiles
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(BGCOLOR)
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
