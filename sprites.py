@@ -6,6 +6,7 @@ from pygame.sprite import Sprite
 from settings import *
 import sys
 from os import path
+import random
 
 #Import Sprite Class
 from pygame.sprite import Sprite
@@ -81,7 +82,7 @@ class Player(Sprite):
         self.speed = 300
         self.hitpoints = 20
         self.sword = False
-        self.opponent_count = 6
+        self.opponent_count = 4
 
         #Position and direction vectors for movement
         self.pos = vector(0,0)
@@ -141,6 +142,7 @@ class Player(Sprite):
                 self.collide_with_opponent_with_sword(self.game.Opponent, True)
             if str(object_collision[0].__class__.__name__) == "Invisible_Slowness_Tiles":
                 self.speed -= 50
+                self.display_jumpscares()
     
     #Opponent collision interactions
     def collide_with_opponent(self, group, kill):
@@ -149,7 +151,7 @@ class Player(Sprite):
             if str(opponent_collision[0].__class__.__name__) == "Opponent":
                 self.hitpoints -= 1
         else:
-         self.collide_with_opponent_with_sword(self.game.Opponent, True)
+            self.collide_with_opponent_with_sword(self.game.Opponent, True) 
     
     #Sword interaction with opponents
     def collide_with_opponent_with_sword(self, group, kill):
@@ -157,6 +159,7 @@ class Player(Sprite):
         if opponent_collision and self.sword == True:
             if str(opponent_collision[0].__class__.__name__) == "Opponent":
                 self.opponent_count -= 1
+                print(self.opponent_count)
 
     #Load sprites on player            
     def load_images(self):
@@ -164,7 +167,21 @@ class Player(Sprite):
                                     self.spritesheet.get_image(32,0, 32, 32)]
             # for frame in self.standing_frames:
             #     frame.set_colorkey(BLACK)
-    
+
+    #Display jumpscare images
+    def display_jumpscares(self):
+
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        self.screen.fill(BLACK)
+        
+        self.jumpscare = random.choice(self.game.jumpscare_images)
+        self.jumpscare_rect = self.jumpscare.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        self.screen.blit(self.jumpscare, self.jumpscare_rect)
+        self.game.jumpscare_sound.play()    
+        pg.display.flip()
+        pg.time.delay(2000)
+        
+
     #Animate sprite
     def animate(self):
         now = pg.time.get_ticks()
@@ -261,7 +278,7 @@ class Opponent(Sprite):
         self.acc = vector(0, 0)
         self.rect.center = self.pos
         self.rot = 0
-        self.chase_distance = 250
+        self.chase_distance = 100
         
         self.speed = 300
         self.chasing = False
@@ -304,7 +321,7 @@ class Opponent(Sprite):
 class Sword(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.Sword
-        Sprite.__init__(self, self.groups)
+        pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = self.game.Sword_img
         self.rect = self.image.get_rect()

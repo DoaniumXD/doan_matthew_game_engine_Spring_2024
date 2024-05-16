@@ -106,7 +106,11 @@ class Game:
         self.Hitpoints_img = pg.image.load(path.join(self.img_folder, 'HEART.png')).convert_alpha()
         self.Sword_img = pg.image.load(path.join(self.img_folder, 'SWORD.png')).convert_alpha()
 
-        
+        #Define Jumpscare images
+        self.jumpscare_image_1 = pg.image.load(path.join(self.img_folder, 'jumpscare_image_1.png')).convert_alpha()
+        self.jumpscare_image_2 = pg.image.load(path.join(self.img_folder, 'jumpscare_image_2.png')).convert_alpha()
+    
+        self.jumpscare_images = [self.jumpscare_image_1, self.jumpscare_image_2]
 
         #Load map data for player and objects
         #self.map_data = []
@@ -145,7 +149,7 @@ class Game:
                     Sword(self, col, row)
                 if tile == "I":
                     Invisible_Slowness_Tiles(self, col, row)
-    
+
     # Init all variables, setup groups, instantiate classes
     def new(self):
 
@@ -153,13 +157,13 @@ class Game:
 
         #Load music file from sounds folder
         pg.mixer.music.load(path.join(self.snd_folder,'Megalovania.mp3'))
+        self.jumpscare_sound = pg.mixer.Sound(path.join(self.snd_folder, 'jumpscare_sound.wav'))
 
         self.test_timer = Cooldown()
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.Speed_PowerUP = pg.sprite.Group()
         self.Hitpoints = pg.sprite.Group()
-        self.Break_Walls_PowerUP = pg.sprite.Group()
         self.Opponent = pg.sprite.Group()
         self.Sword = pg.sprite.Group()
         self.Invisible_Slowness_Tiles = pg.sprite.Group()
@@ -181,7 +185,7 @@ class Game:
                     Sword(self, col, row)
                 if tile == "I":
                     Invisible_Slowness_Tiles(self, col, row)
-    
+
     #Define Run Method in Game Engine
     def run(self):
         #Play music forever when game is being played
@@ -193,8 +197,6 @@ class Game:
             self.update()
             self.draw()
        
-        
-    
     #Quit game and close window
     def quit(self):
          pg.quit()
@@ -254,7 +256,6 @@ class Game:
         self.draw_text(self.screen, "Health: ", 48, WHITE, 1, 0.75)
         self.draw_text(self.screen, str(self.player.hitpoints), 48, WHITE, 5, 0.75)
         pg.display.flip()
-        
 
     #Define Input Method and get input from keyboard
     def events(self):
