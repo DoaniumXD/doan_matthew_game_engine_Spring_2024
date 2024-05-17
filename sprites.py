@@ -140,7 +140,7 @@ class Player(Sprite):
             if str(object_collision[0].__class__.__name__) == "Sword":
                 self.sword = True
                 self.collide_with_opponent_with_sword(self.game.Opponent, True)
-            if str(object_collision[0].__class__.__name__) == "Invisible_Slowness_Tiles":
+            if str(object_collision[0].__class__.__name__) == "Invisible_Slowness_Tiles": #Final Design Goal
                 self.speed -= 50
                 self.display_jumpscares()
     
@@ -169,12 +169,15 @@ class Player(Sprite):
             #     frame.set_colorkey(BLACK)
 
     #Display jumpscare images
+    #Final design goal 
     def display_jumpscares(self):
 
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         self.screen.fill(BLACK)
         
         self.jumpscare = random.choice(self.game.jumpscare_images)
+
+        #Citation: ChatGPT
         self.jumpscare_rect = self.jumpscare.get_rect(center=(WIDTH // 2, HEIGHT // 2))
         self.screen.blit(self.jumpscare, self.jumpscare_rect)
         self.game.jumpscare_sound.play()    
@@ -331,6 +334,8 @@ class Sword(Sprite):
         self.rect.x = self.x * TILESIZE 
         self.rect.y = self.y * TILESIZE 
 
+#Jump scare Tile Class
+#Final Design Goal
 class Invisible_Slowness_Tiles(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.Invisible_Slowness_Tiles

@@ -27,6 +27,8 @@ from tilemap import *
 # Feedback: Collision with enemies cause health to go down; Powerups give certain effects and disappear; Sword makes enemies disapper
 # Freedom: Able to move in the x and y direction. Able to collect, interact, and collide with objects.
 
+#Final Design Goal
+#Define levels 
 LEVEL1 = "level1.txt"
 LEVEL2 = "level2.txt"
 LEVEL3 = "level3.txt"
@@ -119,12 +121,14 @@ class Game:
         #        self.map_data.append(line)
         
     #Level change method
+    #Final Design Goal
+    #Citation: Mr. Cozort's Github
     def change_level(self, lvl):
         # kill all existing sprites
         for s in self.all_sprites:
             s.kill()
         
-        self.player.opponent_count = 6
+        self.player.opponent_count = 4
 
         # reset map data list to empty
         self.map_data = []
@@ -156,7 +160,11 @@ class Game:
         self.load_data()
 
         #Load music file from sounds folder
+        #Beta Project Design Goal
         pg.mixer.music.load(path.join(self.snd_folder,'Megalovania.mp3'))
+
+        #Final Design Goal
+        #Citation: Mr. Cozort's Github
         self.jumpscare_sound = pg.mixer.Sound(path.join(self.snd_folder, 'jumpscare_sound.wav'))
 
         self.test_timer = Cooldown()
@@ -217,9 +225,12 @@ class Game:
              self.display_timeout_screen()
          if self.player.hitpoints == 0:
              self.display_death_screen()
+        
+        #Final Design Goal
          if self.current_level == 5:
              self.display_victory_screen()
 
+        #Final Design Goal
          if self.player.opponent_count == 0:
              self.current_level += 1
              self.change_level(levels[self.current_level])
